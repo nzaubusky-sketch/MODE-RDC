@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketplace de la Mode — RDC</title>
+<meta name="description" content="Marketplace de la mode en République démocratique du Congo">
+<style>
+:root{--primary:#111827;--accent:#e11d48;--gold:#f59e0b;--bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--border:#e5e7eb;--success:#16a34a}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+.top{background:#111827;color:#fff;text-align:center;padding:8px;font-size:13px}
+header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.nav{max-width:1200px;margin:auto;display:flex;align-items:center;gap:18px;padding:15px 20px}
+.logo{font-weight:900;font-size:22px;white-space:nowrap}.logo span{color:var(--accent)}
+.search{flex:1;display:flex;background:#f3f4f6;border-radius:12px;overflow:hidden}.search input{width:100%;border:0;background:transparent;padding:12px 14px;outline:none}.search button{padding:0 16px;background:transparent}
+.nav-actions{display:flex;gap:8px}.icon-btn{background:#fff;border:1px solid var(--border);padding:10px 12px;border-radius:10px}
+.hero{background:linear-gradient(120deg,#111827,#4b1022);color:#fff;padding:55px 20px}
+.hero-inner{max-width:1200px;margin:auto;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}.hero h1{font-size:clamp(34px,5vw,62px);line-height:1;margin:0 0 18px}.hero p{color:#e5e7eb;font-size:18px;line-height:1.6}.hero-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:25px;border-radius:22px}
+.btn{padding:12px 18px;border-radius:10px;font-weight:700}.primary{background:var(--accent);color:#fff}.dark{background:#111827;color:#fff}.light{background:#fff;border:1px solid var(--border)}
+.container{max-width:1200px;margin:auto;padding:30px 20px}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.section-title h2{margin:0}
+.categories{display:flex;gap:10px;overflow:auto;padding-bottom:8px}.cat{background:#fff;border:1px solid var(--border);padding:12px 18px;border-radius:999px;white-space:nowrap}.cat.active{background:#111827;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.product{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:.2s}.product:hover{transform:translateY(-3px);box-shadow:0 10px 30px #0000000d}.product img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#eee}.product-body{padding:14px}.badge{display:inline-block;background:#fee2e2;color:#be123c;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:800}.product h3{font-size:16px;margin:9px 0}.price{font-weight:900;font-size:18px}.old{text-decoration:line-through;color:#9ca3af;font-size:13px;margin-left:5px}.muted{color:var(--muted);font-size:13px}.product-actions{display:flex;gap:8px;margin-top:12px}.product-actions button{flex:1}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+footer{background:#111827;color:#fff;margin-top:30px}.footer-inner{max-width:1200px;margin:auto;padding:40px 20px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}.footer-inner p{color:#cbd5e1;line-height:1.6}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.show{display:flex}.modal-box{background:#fff;border-radius:18px;width:min(560px,100%);max-height:90vh;overflow:auto;padding:25px}.modal-head{display:flex;justify-content:space-between;align-items:center}.close{background:#f3f4f6;border-radius:8px;padding:8px}.form{display:grid;gap:12px}.form input,.form select,.form textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;outline:none}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cart-item{display:flex;gap:12px;border-bottom:1px solid var(--border);padding:12px 0}.cart-item img{width:70px;height:70px;object-fit:cover;border-radius:10px}.qty{display:flex;align-items:center;gap:8px}.qty button{width:28px;height:28px;border-radius:7px;background:#f3f4f6}.total{display:flex;justify-content:space-between;font-size:20px;font-weight:900;padding:18px 0}
+.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px}.stat strong{display:block;font-size:28px;margin-top:5px}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:13px 17px;border-radius:10px;display:none;z-index:100}.toast.show{display:block}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}.footer-inner{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.grid{grid-template-columns:repeat(2,1fr);gap:12px}.hero{padding:38px 15px}.container{padding:22px 14px}.footer-inner{grid-template-columns:1fr}.row{grid-template-columns:1fr}.nav-actions .label{display:none}}
+/* v2 */
+.rolebar{background:#fff7ed;border:1px solid #fed7aa;padding:10px 20px;font-size:13px}.panel{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;margin-top:15px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi{padding:18px;border:1px solid var(--border);border-radius:14px;background:#fff}.kpi b{display:block;font-size:25px;margin-top:5px}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;border-bottom:1px solid var(--border);text-align:left}.status{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.status.pending{background:#fef3c7;color:#92400e}.status.confirmed{background:#dcfce7;color:#166534}.drawer{position:fixed;right:0;top:0;height:100%;width:min(620px,100%);background:#fff;z-index:80;box-shadow:-15px 0 45px #0002;transform:translateX(105%);transition:.25s;padding:22px;overflow:auto}.drawer.show{transform:none}.security{background:#ecfdf5;border:1px solid #bbf7d0;color:#166534;padding:12px;border-radius:10px;font-size:13px}@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.kpis{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="top">🚚 Livraison à Kinshasa • Paiement à la livraison selon le vendeur • Marketplace de la mode</div>
+<header>
+<nav class="nav">
+<div class="logo">MODE<span>RDC</span></div>
+<div class="search"><input id="searchInput" placeholder="Rechercher vêtements, chaussures, accessoires..."><button onclick="searchProducts()">🔎</button></div>
+<div class="nav-actions">
+<button class="icon-btn" onclick="openRoleDashboard()">👤 <span class="label">Compte</span></button>
+<button class="icon-btn" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
+</div>
+</nav>
+</header>
+
+<section class="hero">
+<div class="hero-inner">
+<div>
+<div class="badge">NOUVELLE COLLECTION</div>
+<h1>La mode congolaise, à portée de clic.</h1>
+<p>Découvrez des vêtements, chaussures et accessoires proposés par des vendeurs de Kinshasa et d'ailleurs en RDC.</p>
+<button class="btn primary" onclick="scrollToProducts()">Découvrir les produits</button>
+<button class="btn light" onclick="openModal('sellerModal')" style="margin-left:8px">Devenir vendeur</button>
+</div>
+<div class="hero-card"><h2>🛍️ Votre boutique en ligne</h2><p>Ajoutez vos produits, gérez vos commandes et développez votre activité depuis un seul espace.</p><button class="btn light" onclick="openModal('sellerModal')">Créer ma boutique</button></div>
+</div>
+</section>
+
+<div class="rolebar">🔐 <b>Mode sécurisé :</b> les actions sensibles doivent être validées côté serveur en production.</div>
+<main class="container" id="productsSection">
+<div class="section-title"><h2>Catégories</h2></div>
+<div class="categories" id="categories"></div>
+
+<div class="section-title" style="margin-top:30px"><h2 id="productTitle">Produits populaires</h2><select id="sort" onchange="renderProducts()"><option value="new">Nouveautés</option><option value="priceAsc">Prix croissant</option><option value="priceDesc">Prix décroissant</option></select></div>
+<div class="grid" id="products"></div>
+</main>
+
+<section class="container">
+<div class="section-title"><h2>Espace vendeur</h2><button class="btn dark" onclick="openModal('sellerModal')">Ouvrir une boutique</button></div>
+<div class="dashboard">
+<div class="stat">👥<span class="muted">Vendeurs inscrits</span><strong id="sellerCount">0</strong></div>
+<div class="stat">🛍️<span class="muted">Produits disponibles</span><strong id="productCount">0</strong></div>
+<div class="stat">📦<span class="muted">Commandes démo</span><strong id="orderCount">0</strong></div>
+</div>
+</section>
+
+<footer><div class="footer-inner">
+<div><div class="logo">MODE<span>RDC</span></div><p>Marketplace de la mode conçu pour connecter vendeurs et clients en RDC. Cette version est une démonstration locale : les paiements réels nécessitent une intégration serveur sécurisée.</p></div>
+<div><h3>Marketplace</h3><p>Catalogue<br>Vendeurs<br>Commandes<br>Livraison</p></div>
+<div><h3>Assistance</h3><p>Centre d'aide<br>Conditions<br>Confidentialité<br>Contact</p></div>
+</div></footer>
+
+<!-- CART -->
+<div class="modal" id="cartModal"><div class="modal-box">
+<div class="modal-head"><h2>🛒 Mon panier</h2><button class="close" onclick="closeModal('cartModal')">✕</button></div>
+<div id="cartItems"></div><div class="total"><span>Total</span><span id="cartTotal">$0</span></div>
+<button class="btn primary" style="width:100%" onclick="checkout()">Passer la commande</button>
+</div></div>
+
+<!-- ACCOUNT -->
+<div class="modal" id="accountModal"><div class="modal-box">
+<div class="modal-head"><h2>👤 Mon compte</h2><button class="close" onclick="closeModal('accountModal')">✕</button></div>
+<form class="form" onsubmit="login(event)">
+<input id="loginEmail" type="email" placeholder="Adresse e-mail" required>
+<input id="loginPassword" type="password" placeholder="Mot de passe" required><select id="loginRole"><option value="customer">Client</option><option value="seller">Vendeur</option><option value="admin">Administrateur</option></select>
+<button class="btn primary">Se connecter</button>
+<button type="button" class="btn light" onclick="showRegister()">Créer un compte</button>
+</form></div></div>
+
+<!-- SELLER -->
+<div class="modal" id="sellerModal"><div class="modal-box">
+<div class="modal-head"><h2>🏪 Devenir vendeur</h2><button class="close" onclick="closeModal('sellerModal')">✕</button></div>
+<form class="form" onsubmit="registerSeller(event)">
+<input id="sellerName" placeholder="Nom complet / entreprise" required>
+<input id="sellerShop" placeholder="Nom de la boutique" required>
+<input id="sellerPhone" placeholder="Téléphone (+243...)" required>
+<input id="sellerEmail" type="email" placeholder="E-mail" required>
+<select id="sellerCategory"><option>Vêtements</option><option>Chaussures</option><option>Accessoires</option><option>Mode africaine</option></select>
+<button class="btn primary">Créer ma boutique</button>
+</form></div></div>
+
+<!-- PRODUCT -->
+<div class="modal" id="productModal"><div class="modal-box">
+<div class="modal-head"><h2 id="detailName"></h2><button class="close" onclick="closeModal('productModal')">✕</button></div>
+<img id="detailImg" style="width:100%;border-radius:12px;max-height:400px;object-fit:cover">
+<p id="detailDesc"></p><div class="price" id="detailPrice"></div>
+<button class="btn primary" style="width:100%;margin-top:15px" id="detailAdd">Ajouter au panier</button>
+</div></div>
+
+<!-- CHECKOUT -->
+<div class="modal" id="checkoutModal"><div class="modal-box"><div class="modal-head"><h2>💳 Finaliser la commande</h2><button class="close" onclick="closeModal('checkoutModal')">✕</button></div><form class="form" onsubmit="placeOrder(event)"><div class="security">🔒 Ne stockez jamais les données de carte dans localStorage.</div><input id="buyerName" placeholder="Nom complet" required><input id="buyerPhone" placeholder="Téléphone (+243...)" required><textarea id="buyerAddress" placeholder="Adresse de livraison" required></textarea><select id="paymentMethod" required><option value="">Choisir le paiement</option><option>Mobile Money</option><option>Carte bancaire</option><option>Paiement à la livraison</option></select><button class="btn primary">Confirmer et payer</button></form></div></div>
+<!-- CONFIRMATION -->
+<div class="modal" id="confirmationModal"><div class="modal-box"><div class="modal-head"><h2>✅ Commande confirmée</h2><button class="close" onclick="closeModal('confirmationModal')">✕</button></div><div id="confirmationBody"></div></div></div>
+<!-- DASHBOARD -->
+<div class="drawer" id="dashboardDrawer"><div class="modal-head"><h2 id="dashTitle">Dashboard</h2><button class="close" onclick="closeDashboard()">✕</button></div><div id="dashContent"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const products=[
+{id:1,name:"Robe wax élégante",category:"Vêtements",price:35,old:45,seller:"Maison Kin",img:"https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=700&q=80",desc:"Robe inspirée des motifs africains, adaptée aux sorties et cérémonies."},
+{id:2,name:"Sneakers urbaines",category:"Chaussures",price:48,old:60,seller:"Urban Style",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80",desc:"Chaussures confortables pour un style urbain quotidien."},
+{id:3,name:"Sac à main premium",category:"Accessoires",price:29,old:39,seller:"Kasaï Fashion",img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=700&q=80",desc:"Sac élégant pour compléter vos tenues."},
+{id:4,name:"Chemise homme classique",category:"Vêtements",price:25,old:32,seller:"Gentleman RDC",img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=700&q=80",desc:"Chemise polyvalente pour bureau, cérémonies et sorties."},
+{id:5,name:"Montre élégante",category:"Accessoires",price:42,old:55,seller:"Time Kin",img:"https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=700&q=80",desc:"Montre au design moderne."},
+{id:6,name:"Ensemble africain",category:"Mode africaine",price:55,old:70,seller:"Création Kin",img:"https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=700&q=80",desc:"Ensemble aux inspirations africaines."},
+{id:7,name:"Sandales femme",category:"Chaussures",price:22,old:30,seller:"Belle Marche",img:"https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=700&q=80",desc:"Sandales confortables et élégantes."},
+{id:8,name:"Lunettes tendance",category:"Accessoires",price:18,old:25,seller:"Style 243",img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=700&q=80",desc:"Lunettes de mode pour compléter votre look."}
+];
+let cart=JSON.parse(localStorage.getItem("modeRdcCart")||"[]");
+let sellers=JSON.parse(localStorage.getItem("modeRdcSellers")||"[]");
+let orders=JSON.parse(localStorage.getItem("modeRdcOrders")||"[]");
+let activeCategory="Tous";
+
+function money(n){return "$"+Number(n).toFixed(2)}
+function save(){localStorage.setItem("modeRdcCart",JSON.stringify(cart));localStorage.setItem("modeRdcSellers",JSON.stringify(sellers));localStorage.setItem("modeRdcOrders",JSON.stringify(orders))}
+function renderCategories(){
+const cats=["Tous",...new Set(products.map(p=>p.category))];
+document.getElementById("categories").innerHTML=cats.map(c=>`<button class="cat ${c===activeCategory?'active':''}" onclick="setCategory('${c}')">${c}</button>`).join("");
+}
+function setCategory(c){activeCategory=c;document.getElementById("productTitle").textContent=c==="Tous"?"Produits populaires":c;renderCategories();renderProducts()}
+function renderProducts(){
+let q=document.getElementById("searchInput").value.toLowerCase();
+let list=products.filter(p=>(activeCategory==="Tous"||p.category===activeCategory)&&(!q||`${p.name} ${p.category} ${p.seller}`.toLowerCase().includes(q)));
+const sort=document.getElementById("sort").value;
+if(sort==="priceAsc")list.sort((a,b)=>a.price-b.price);if(sort==="priceDesc")list.sort((a,b)=>b.price-a.price);
+document.getElementById("products").innerHTML=list.length?list.map(p=>`
+<article class="product">
+<img src="${p.img}" alt="${p.name}" loading="lazy" onclick="showProduct(${p.id})">
+<div class="product-body"><span class="badge">${p.category}</span><h3>${p.name}</h3><div class="muted">${p.seller}</div><div style="margin-top:8px"><span class="price">${money(p.price)}</span><span class="old">${money(p.old)}</span></div>
+<div class="product-actions"><button class="btn light" onclick="showProduct(${p.id})">Voir</button><button class="btn primary" onclick="addToCart(${p.id})">Ajouter</button></div></div>
+</article>`).join(""):`<div class="empty" style="grid-column:1/-1">Aucun produit trouvé.</div>`;
+updateStats();
+}
+function searchProducts(){renderProducts();scrollToProducts()}
+function scrollToProducts(){document.getElementById("productsSection").scrollIntoView({behavior:"smooth"})}
+function addToCart(id){let item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});save();updateCart();toast("Produit ajouté au panier");}
+function updateCart(){document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0)}
+function openCart(){renderCart();openModal("cartModal")}
+function renderCart(){
+const box=document.getElementById("cartItems");
+if(!cart.length){box.innerHTML='<div class="empty">Votre panier est vide.</div>';document.getElementById("cartTotal").textContent="$0";return}
+let total=0;box.innerHTML=cart.map(item=>{let p=products.find(x=>x.id===item.id);let sub=p.price*item.qty;total+=sub;return `<div class="cart-item"><img src="${p.img}"><div style="flex:1"><strong>${p.name}</strong><div class="muted">${money(p.price)} • ${p.seller}</div><div class="qty" style="margin-top:8px"><button onclick="changeQty(${p.id},-1)">−</button>${item.qty}<button onclick="changeQty(${p.id},1)">+</button><button onclick="removeCart(${p.id})" style="margin-left:auto">🗑️</button></div></div></div>`}).join("");
+document.getElementById("cartTotal").textContent=money(total)
+}
+function changeQty(id,n){let x=cart.find(i=>i.id===id);if(!x)return;x.qty+=n;if(x.qty<=0)cart=cart.filter(i=>i.id!==id);save();updateCart();renderCart()}
+function removeCart(id){cart=cart.filter(i=>i.id!==id);save();updateCart();renderCart()}
+function checkout(){
+if(!cart.length){toast("Votre panier est vide");return}
+let total=cart.reduce((s,x)=>{let p=products.find(y=>y.id===x.id);return s+p.price*x.qty},0);
+orders.push({id:"CMD-"+Date.now(),date:new Date().toLocaleString("fr-FR"),total,items:[...cart]});cart=[];save();updateCart();closeModal("cartModal");updateStats();toast("Commande enregistrée (mode démo)");
+}
+function showProduct(id){
+let p=products.find(x=>x.id===id);document.getElementById("detailName").textContent=p.name;document.getElementById("detailImg").src=p.img;document.getElementById("detailDesc").textContent=p.desc+" Vendeur : "+p.seller+".";document.getElementById("detailPrice").textContent=money(p.price);document.getElementById("detailAdd").onclick=()=>addToCart(p.id);openModal("productModal")
+}
+let currentUser=JSON.parse(localStorage.getItem("modeRdcUser")||"null");
+function login(e){e.preventDefault();const email=loginEmail.value.trim();const role=loginRole.value;currentUser={email,role,name:email.split("@")[0]};localStorage.setItem("modeRdcUser",JSON.stringify(currentUser));closeModal("accountModal");toast("Session ouverte : "+role);}
+function openRoleDashboard(){if(!currentUser){openModal("accountModal");return}openDashboard(currentUser.role)}
+function openDashboard(role){if(!currentUser){openModal("accountModal");return}if(!["customer","seller","admin"].includes(role)){toast("Rôle invalide");return}dashboardDrawer.classList.add("show");dashTitle.textContent=role==="admin"?"Administration":role==="seller"?"Dashboard vendeur":"Mes commandes";role==="admin"?renderAdmin():role==="seller"?renderSeller():renderCustomer()}
+function closeDashboard(){dashboardDrawer.classList.remove("show")}
+function renderCustomer(){const mine=orders.filter(o=>o.buyer&&o.buyer.phone===currentUser.phone);dashContent.innerHTML=`<div class="kpis"><div class="kpi">Commandes<b>${mine.length}</b></div><div class="kpi">Total<b>${money(mine.reduce((a,o)=>a+o.total,0))}</b></div></div><div class="panel"><h3>Historique</h3>${mine.length?mine.map(o=>`<p><b>${o.id}</b> · ${money(o.total)} · ${o.status}</p>`).join(""):"Aucune commande."}</div>`}
+function renderSeller(){const mine=sellers.filter(s=>s.email===currentUser.email);dashContent.innerHTML=`<div class="kpis"><div class="kpi">Boutiques<b>${mine.length}</b></div><div class="kpi">Produits<b>${products.filter(p=>mine.some(s=>s.shop===p.seller)).length}</b></div><div class="kpi">Commandes<b>${orders.length}</b></div><div class="kpi">CA<b>${money(orders.reduce((a,o)=>a+o.total,0))}</b></div></div><div class="panel"><h3>Activités vendeur</h3><p>• Ajouter/modifier les produits et stocks</p><p>• Traiter les commandes</p><p>• Suivre paiements et livraisons</p><p>• Gérer la boutique</p></div>`}
+function renderAdmin(){dashContent.innerHTML=`<div class="kpis"><div class="kpi">Vendeurs<b>${sellers.length}</b></div><div class="kpi">Produits<b>${products.length}</b></div><div class="kpi">Commandes<b>${orders.length}</b></div><div class="kpi">CA<b>${money(orders.reduce((a,o)=>a+o.total,0))}</b></div></div><div class="panel"><h3>Gestion des vendeurs</h3><div class="table-wrap"><table class="table"><tr><th>Boutique</th><th>Nom</th><th>Statut</th></tr>${sellers.map(s=>`<tr><td>${s.shop}</td><td>${s.name}</td><td>${s.status||"pending"}</td></tr>`).join("")}</table></div></div><div class="panel"><h3>Commandes</h3>${orders.slice().reverse().map(o=>`<p><b>${o.id}</b> · ${money(o.total)} · ${o.payment?.status||"pending"} · ${o.status}</p>`).join("")||"Aucune commande."}</div>`}
+function placeOrder(e){e.preventDefault();if(!cart.length)return;const total=cart.reduce((a,x)=>a+products.find(p=>p.id===x.id).price*x.qty,0);const o={id:"CMD-"+Date.now(),date:new Date().toISOString(),total,items:[...cart],buyer:{name:buyerName.value,phone:buyerPhone.value,address:buyerAddress.value},payment:{method:paymentMethod.value,status:"pending"},status:"confirmed"};orders.push(o);cart=[];save();updateCart();updateStats();closeModal("checkoutModal");confirmationBody.innerHTML=`<div class="security">Commande <b>${o.id}</b> confirmée.</div><p>Total : <b>${money(o.total)}</b></p><p>Paiement : ${o.payment.method}</p>`;openModal("confirmationModal")}
+function showRegister(){document.getElementById("accountModal").querySelector(".modal-box").innerHTML=`<div class="modal-head"><h2>Créer un compte</h2><button class="close" onclick="closeModal('accountModal')">✕</button></div><form class="form" onsubmit="registerUser(event)"><input id="regName" placeholder="Nom complet" required><input id="regEmail" type="email" placeholder="E-mail" required><input id="regPassword" type="password" placeholder="Mot de passe" required><button class="btn primary">Créer mon compte</button></form>`}
+function registerUser(e){e.preventDefault();closeModal("accountModal");toast("Compte créé en mode démo")}
+function registerSeller(e){e.preventDefault();sellers.push({name:document.getElementById("sellerName").value,shop:document.getElementById("sellerShop").value,phone:document.getElementById("sellerPhone").value,email:document.getElementById("sellerEmail").value,category:document.getElementById("sellerCategory").value});save();closeModal("sellerModal");updateStats();toast("Boutique enregistrée en mode démo")}
+function updateStats(){document.getElementById("sellerCount").textContent=sellers.length;document.getElementById("productCount").textContent=products.length;document.getElementById("orderCount").textContent=orders.length}
+function openModal(id){document.getElementById(id).classList.add("show")}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function toast(msg){let t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
+document.getElementById("searchInput").addEventListener("input",renderProducts);
+renderCategories();renderProducts();updateCart();
+// PRODUCTION SECURITY: HTTPS, server-side authentication, Argon2/bcrypt password hashing, RBAC on every API, CSRF protection, rate limiting, HttpOnly/Secure/SameSite cookies, server-side price/stock checks, signed payment webhooks, audit logs, and secrets in environment variables.
+</script>
+</body>
+</html>
